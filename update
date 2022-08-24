@@ -1,0 +1,21 @@
+#!/bin/zsh
+
+# Get a list of the directories
+dirs=()
+for i in $(ls -d */) ; do
+  if [ $i != "venv/" ]; then
+      dirs+=($i)
+  fi
+done
+
+# Loop through the directories and update them
+for i in $dirs ; do
+  cd $i
+  echo "Building \"$(basename $i)\"..."
+  poetry build > /dev/null
+
+  cd ..
+  echo "Installing \"$(basename $i)\"..."
+  pip install "$(pwd -P)/$i" > /dev/null
+  echo "Successfully installed \"$(basename $i)\""
+done

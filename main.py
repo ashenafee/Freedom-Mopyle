@@ -1,5 +1,8 @@
-from logon import logon as l
+from freedom.FreedomLogin import FreedomLogin
+from freedom.FreedomAccount import account_from_service_item
+import json
 
+# TODO: Print general info
 
 if __name__ == "__main__":
     print("Welcome to Freedom Mobile MyAccount!")
@@ -8,25 +11,11 @@ if __name__ == "__main__":
     phone_number = input("Phone number: ")
     pin = input("Pin: ")
 
-    response = l.logon(phone_number, pin)
+    fl = FreedomLogin(phone_number, pin)
+    fl.login()
+    fl.authenticate()
+    service_item = fl.get_service_item()
 
-    if not response:
-        print("Logon failed!")
-        exit()
+    account = account_from_service_item(service_item)
 
-    tmp_hash = response["tmpHash"]
-    l.send_verification(response)
-    response, cookies = l.validate_security_code(tmp_hash)
-
-    if response["Result"] != "AuthUserSuccess":
-        print("Verification failed!")
-        exit()
-
-    encrypted_token = l.get_dsl_token(cookies)
-    service_item = l.service_item(cookies)
-    l.authenticate(encrypted_token)
-
-    print("Done")
-
-
-
+    print(json.dumps(service_item, indent=4))

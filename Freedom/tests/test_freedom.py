@@ -1,4 +1,4 @@
-from logon import __version__
+from freedom import __version__
 
 
 def test_version():
